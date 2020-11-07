@@ -29,15 +29,9 @@ private const val COMIC_INFO = "ComicInfo.xml"
 @Service
 class FileSystemScanner(
   private val komgaProperties: KomgaProperties,
-  extractors: List<MediaContainerExtractor>,
-  private val bookAnalyzer: BookAnalyzer
 ) {
 
   @Autowired(required = false) private val mapper: XmlMapper = XmlMapper()
-  val supportedExtensions = listOf("cbz", "zip", "cbr", "rar", "pdf", "epub")
-  val supportedMediaTypes = extractors
-    .flatMap { e -> e.mediaTypes().map { it to e } }
-    .toMap()
 
   fun scanRootFolder(root: Path, forceDirectoryModifiedTime: Boolean = false): Map<Series, List<Book>> {
     logger.info { "Scanning folder: $root" }
@@ -53,6 +47,12 @@ class FileSystemScanner(
       var seriesfile: Series
       var mediabook: Media
       var seriesName: String
+      val bookAnalyzer: BookAnalyzer
+      val extractors: List<MediaContainerExtractor>
+      val supportedExtensions = listOf("cbz", "zip", "cbr", "rar", "pdf", "epub")
+      val supportedMediaTypes = extractors
+        .flatMap { e -> e.mediaTypes().map { it to e } }
+        .toMap()
 
       scannedSeries = mutableMapOf()
 
